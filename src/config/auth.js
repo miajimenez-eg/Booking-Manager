@@ -4,7 +4,12 @@ const authConfig = {
     baseURL: process.env.AUTH0_AUDIENCE,
     clientID: process.env.AUTH0_CLIENT_ID,
     issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-    secret: process.env.AUTH0_SECRET
+    secret: process.env.AUTH0_SECRET,
+    routes: {
+        login: false,
+        logout: false,
+        callback: false
+    }
 }
 
 module.exports = authConfig
