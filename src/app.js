@@ -7,7 +7,7 @@ const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -112,3 +112,5 @@ app.delete('/bookings/:id', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
+module.exports = app;
