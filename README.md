@@ -49,7 +49,7 @@ This endpoint can be used to update a booking by providing its unique ID.
 #### Authentication
 This endppoint is accessible to authenticated users only.
 
-### DELETE '/bookngs/:id'
+### DELETE '/bookings/:id'
 This endpoint enables a user to delete a booking.
 
 #### Authentication
