@@ -78,7 +78,7 @@ app.delete('/bookings/:id', async (req, res) => {
 // AUTH
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
-app.use(auth(config));
+app.use(auth(authConfig));
 
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
