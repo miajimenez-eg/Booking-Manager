@@ -20,38 +20,38 @@ Explain how authentication works in your API. If it requires API keys, tokens, o
 
 ### Endpoints
 ### GET '/'
-This endpoint takes you to the home/login page.
+- This endpoint takes you to the home/login page.
 
 #### Authentication
-This endppoint is accessible to both authenticated and unauthenticated users.
+- This endppoint is accessible to both authenticated and unauthenticated users.
 
 ### GET '/bookings'
-This endpoint allows you to view all bookings made by a user.
+- This endpoint allows you to view all bookings made by a user.
 
 #### Authentication
-This endppoint is accessible to authenticated users only.
+- This endppoint is accessible to authenticated users only.
 
 ### GET '/bookings/:id'
-This endpoint allows you to retireve details and information about a specific booking by providing its unique ID
+- This endpoint allows you to retireve details and information about a specific booking by providing its unique ID
 
 #### Authentication
-This endppoint is accessible to authenticated users only.
+- This endppoint is accessible to authenticated users only.
 
 ### POST '/bookings'
-This endpoint enables a user to create a new booking.
+- This endpoint enables a user to create a new booking.
 
 #### Authentication
-This endppoint is accessible to authenticated users only.
+- This endppoint is accessible to authenticated users only.
 
 ### PUT '/bookings/:id'
-This endpoint can be used to update a booking by providing its unique ID.
+- This endpoint can be used to update a booking by providing its unique ID.
 
 #### Authentication
-This endppoint is accessible to authenticated users only.
+- This endppoint is accessible to authenticated users only.
 
 ### DELETE '/bookings/:id'
-This endpoint enables a user to delete a booking.
+- This endpoint enables a user to delete a booking.
 
 #### Authentication
-This endppoint is accessible to authenticated users only.
+- This endppoint is accessible to authenticated users only.
 
