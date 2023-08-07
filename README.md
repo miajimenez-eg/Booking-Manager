@@ -8,9 +8,9 @@ List any prerequisites users need to have in order to use your API, such as Node
 
 ### Installation
 1. Clone this repository
-2. Install the required dependencies using the following command:
+2. Install the required dependencies using the following command: `npm install`
 3. Set up your configuration files, such as auth.js and db.js
-4. Start the server:
+4. Start the server: `npm start run-dev`
 
 ## Usage
 
