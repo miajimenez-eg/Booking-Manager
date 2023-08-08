@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
+const { User, hashPassword, encryptInfo } = require('./models/User');
 
 const PORT = process.env.PORT || 3000;
 
@@ -75,7 +76,7 @@ app.get('/profile', requiresAuth(), (req, res) => {
 });
 
 
-// ENDPOINTS
+// BOOKING ENDPOINTS
 
 // Route to retrieve all bookings
 app.get('/bookings', async (req, res) => {
@@ -112,6 +113,31 @@ app.put('/bookings/:id', async (req, res) => {
 app.delete('/bookings/:id', async (req, res) => {
     const booking = await Booking.findByIdAndRemove(req.params.id);
     res.send(booking);
+});
+
+// USER ENDPOINTS
+app.post('/register', async (req, res) => {
+    try {
+        // Hash new user's password
+        const hashedPassword = await hashPassword(req.body.password);
+
+        // Create new user
+        const newUser = new User({
+            email: req.body.email,
+            name: req.body.name,
+            password: hashedPassword,
+            bookings: {}
+        });
+
+        // Save new user to the database
+        const savedUser = await newUser.save();
+
+        // Status 201 for successful resource creation
+        res.status(201).send(savedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(400).send("Something went wrong");
+    }
 });
 
 
