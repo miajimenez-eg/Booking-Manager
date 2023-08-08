@@ -51,7 +51,15 @@ app.use((req, res, next) => {
 // CONNECT TO DATABASE
 
 // Call the connectDB() function
-connectDB();
+// Connect to MongoDB
+const dbConnection = connectDB();
+
+// Check if connected
+if (dbConnection.readyState === 1) {
+  console.log('Application is connected to MongoDB');
+} else {
+  console.log('Application is not connected to MongoDB');
+}
 
 // AUTH ROUTES
 
