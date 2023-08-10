@@ -116,29 +116,29 @@ app.delete('/bookings/:id', async (req, res) => {
 });
 
 // USER ENDPOINTS
-app.post('/register', async (req, res) => {
-    try {
-        // Hash new user's password
-        const hashedPassword = await hashPassword(req.body.password);
+// app.post('/register', async (req, res) => {
+//     try {
+//         // Hash new user's password
+//         const hashedPassword = await hashPassword(req.body.password);
 
-        // Create new user
-        const newUser = new User({
-            email: req.body.email,
-            name: req.body.name,
-            password: hashedPassword,
-            bookings: {}
-        });
+//         // Create new user
+//         const newUser = new User({
+//             email: req.body.email,
+//             name: req.body.name,
+//             password: hashedPassword,
+//             bookings: {}
+//         });
 
-        // Save new user to the database
-        const savedUser = await newUser.save();
+//         // Save new user to the database
+//         const savedUser = await newUser.save();
 
-        // Status 201 for successful resource creation
-        res.status(201).send(savedUser);
-    } catch (error) {
-        console.error(error);
-        res.status(400).send("Something went wrong");
-    }
-});
+//         // Status 201 for successful resource creation
+//         res.status(201).send(savedUser);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(400).send("Something went wrong");
+//     }
+// });
 
 
 
