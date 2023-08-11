@@ -86,8 +86,22 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 // BOOKING ENDPOINTS
 
+// Middlware to check data access/edit/delete permissions
+
+const isAuthorisedForRequest = async (req, res, next) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        if(booking.userId !== req.user.id) {
+            res.status(403).json({ message: 'Forbidden: You do not have permission to do this action'});
+        }
+        next();
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
+}
+
 // Route to retrieve all bookings
-app.get('/bookings', isAuthenticated, async (req, res) => {
+app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
         const bookings = await Booking.find({});
         res.send({bookings, user: req.user});
@@ -97,7 +111,7 @@ app.get('/bookings', isAuthenticated, async (req, res) => {
 });
 
 // Route to retrieve a specific booking by ID
-app.get('/bookings/:id', isAuthenticated, async (req, res) => {
+app.get('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
         if(!booking) {
@@ -122,7 +136,7 @@ app.post('/bookings', isAuthenticated, (req, res) => {
 });
 
 // Route to update a booking by ID
-app.put('/bookings/:id', isAuthenticated, async (req, res) => {
+app.put('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
         const oldBooking = await Booking.findByIdAndUpdate(req.params.id, req.body);
         if(!oldBooking){
@@ -136,7 +150,7 @@ app.put('/bookings/:id', isAuthenticated, async (req, res) => {
 });
 
 // Route to delete a booking by ID
-app.delete('/bookings/:id', isAuthenticated, async (req, res) => {
+app.delete('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
         const booking = await Booking.findByIdAndRemove(req.params.id);
         if(!booking){
