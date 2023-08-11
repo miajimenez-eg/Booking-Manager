@@ -87,19 +87,30 @@ app.get('/profile', requiresAuth(), (req, res) => {
 // BOOKING ENDPOINTS
 
 // Route to retrieve all bookings
-app.get('/bookings', async (req, res) => {
-    const bookings = await Booking.find({});
-    res.send({bookings, user: req.user});
+app.get('/bookings', isAuthenticated, async (req, res) => {
+    try {
+        const bookings = await Booking.find({});
+        res.send({bookings, user: req.user});
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
 });
 
 // Route to retrieve a specific booking by ID
-app.get('/bookings/:id', async (req, res) => {
-    const booking = await Booking.findById(req.params.id);
-    res.send({booking, user: req.userId});
+app.get('/bookings/:id', isAuthenticated, async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        if(!booking) {
+            res.status(404).json({ message: 'Booking not found' });
+        }
+        res.send({booking, user: req.userId});
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong'});
+    }
 });
 
 // Route to create a new booking
-app.post('/bookings', (req, res) => {
+app.post('/bookings', isAuthenticated, (req, res) => {
     const booking = new Booking(req.body);
     booking.save(booking)
         .then(data => {
@@ -111,16 +122,30 @@ app.post('/bookings', (req, res) => {
 });
 
 // Route to update a booking by ID
-app.put('/bookings/:id', async (req, res) => {
-    const oldBooking = await Booking.findByIdAndUpdate(req.params.id, req.body);
-    const newBooking = await Booking.findById(req.params.id);
-    res.send({ oldBooking, newBooking });
+app.put('/bookings/:id', isAuthenticated, async (req, res) => {
+    try {
+        const oldBooking = await Booking.findByIdAndUpdate(req.params.id, req.body);
+        if(!oldBooking){
+            res.status(404).json({ message: 'Booking not found' });
+        }
+        const newBooking = await Booking.findById(req.params.id);
+        res.send({ oldBooking, newBooking });
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
 });
 
 // Route to delete a booking by ID
-app.delete('/bookings/:id', async (req, res) => {
-    const booking = await Booking.findByIdAndRemove(req.params.id);
-    res.send(booking);
+app.delete('/bookings/:id', isAuthenticated, async (req, res) => {
+    try {
+        const booking = await Booking.findByIdAndRemove(req.params.id);
+        if(!booking){
+            res.status(404).json({ message: 'Booking not found' });
+        }
+        res.send(booking);
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
 });
 
 // USER ENDPOINTS
