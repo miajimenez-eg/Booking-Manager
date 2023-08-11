@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     email: String,
     name: String, 
     password: String,
-    bookings: Object
+    bookings: Object,
+    isAdmin : { type: Boolean, default: false }
 });
 
 // Function to encrypt sensitive data
