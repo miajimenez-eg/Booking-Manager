@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
+const { User } = require('./models/User');
 // const { User, hashPassword, encryptInfo } = require('./models/User');
 
 const PORT = process.env.PORT || 3000;
@@ -86,19 +87,32 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 // BOOKING ENDPOINTS
 
+// Middleware to check if a user is an admin
+
+const isAdmin = async (req, res, next) => {
+        if(req.user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ message: 'You are not authorised to do this action'});
+        }
+    
+};
+
 // Middlware to check data access/edit/delete permissions
 
 const isAuthorisedForRequest = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id);
-        if(booking.userId !== req.user.id) {
-            res.status(403).json({ message: 'Forbidden: You do not have permission to do this action'});
+        if(booking.userId === req.user.id || req.user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ message: 'You are not authorised to do this action'});
         }
-        next();
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong' });
     }
 }
+
 
 // Route to retrieve all bookings as a basic user
 app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
