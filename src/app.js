@@ -100,11 +100,11 @@ const isAuthorisedForRequest = async (req, res, next) => {
     }
 }
 
-// Route to retrieve all bookings
+// Route to retrieve all bookings as a basic user
 app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
-        const bookings = await Booking.find({});
-        res.send({bookings, user: req.user});
+        const bookings = await Booking.find({ userId: req.user.id });
+        res.send({ bookings, user: req.user });
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong' });
     }
@@ -117,7 +117,7 @@ app.get('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, re
         if(!booking) {
             res.status(404).json({ message: 'Booking not found' });
         }
-        res.send({booking, user: req.userId});
+        res.send({ booking, user: req.userId });
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong'});
     }
