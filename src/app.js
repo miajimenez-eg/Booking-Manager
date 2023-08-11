@@ -103,7 +103,8 @@ app.get('/profile', requiresAuth(), (req, res) => {
 const isAuthorisedForRequest = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id);
-        if(booking.userId === req.user.id || req.user.isAdmin) {
+        const user = await User.findById(req.params.id);
+        if(booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
             next();
         } else {
             res.status(403).json({ message: 'You are not authorised to do this action'});
@@ -182,6 +183,21 @@ app.delete('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req,
 });
 
 // USER ENDPOINTS
+
+// Route to edit user information
+app.put('/users/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+    try{
+        const oldUser = await User.findByIdAndUpdate(req,params.id, req.body);
+        if(!oldUser) {
+            res.status(404).json({ message: 'User not found' });
+        }
+        const newUser = await User.findById(req.params.id);
+        res.send({ oldUser, newUser });
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
+})
+
 // app.post('/register', async (req, res) => {
 //     try {
 //         // Hash new user's password
