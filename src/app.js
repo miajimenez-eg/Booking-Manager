@@ -7,7 +7,7 @@ const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
 const { User } = require('./models/User');
-// const { User, hashPassword, encryptInfo } = require('./models/User');
+const handleAuthentication = require('./authMiddleware');
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 
 // Custom middleware to handle user authentication
 app.use((req, res, next) => {
+    console.log('handleAuthentication function running')
     // Initialise user object in the request if not present
     if(req.user == undefined){
         req.user = {};
@@ -84,6 +85,47 @@ app.get('/profile', requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.oidc.user));
 });
 
+const isAuthorisedForAllBookings = (req, res, next) => {
+    if (req.user.isAdmin) {
+        next();
+    } else {
+        res.status(403).json({ message: 'You are not authorised to do this action' });
+    }
+};
+
+const isAuthorisedForBooking = async (req, res, next) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        if (!booking) {
+            res.status(404).json({ message: 'Booking not found' });
+            return;
+        }
+        
+        const user = await User.findById(req.user.id);
+        if (booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
+            next();
+        } else {
+            res.status(403).json({ message: 'You are not authorised to do this action' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
+};
+
+
+const isAuthorisedForRequest = async (req, res, next) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        const user = await User.findById(req.params.id);
+        if(booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
+            next();
+        } else {
+            res.status(403).json({ message: 'You are not authorised to do this action'});
+        }
+    } catch(error) {
+        res.status(400).json({ message: 'Something went wrong' });
+    }
+}
 
 // BOOKING ENDPOINTS
 
@@ -100,23 +142,10 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 // Middlware to check data access/edit/delete permissions
 
-const isAuthorisedForRequest = async (req, res, next) => {
-    try {
-        const booking = await Booking.findById(req.params.id);
-        const user = await User.findById(req.params.id);
-        if(booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
-            next();
-        } else {
-            res.status(403).json({ message: 'You are not authorised to do this action'});
-        }
-    } catch(error) {
-        res.status(400).json({ message: 'Something went wrong' });
-    }
-}
 
 
 // Route to retrieve all bookings
-app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+app.get('/bookings', isAuthorisedForAllBookings, async (req, res) => {
     try {
         if(req.user.isAdmin){
             const bookings = await Booking.find({});
@@ -131,7 +160,7 @@ app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) =
 });
 
 // Route to retrieve a specific booking by ID
-app.get('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+app.get('/bookings/:id', isAuthorisedForBooking, async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
         if(!booking) {
@@ -144,7 +173,7 @@ app.get('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, re
 });
 
 // Route to create a new booking
-app.post('/bookings', isAuthenticated, (req, res) => {
+app.post('/bookings', (req, res) => {
     const booking = new Booking(req.body);
     booking.save(booking)
         .then(data => {
@@ -156,7 +185,7 @@ app.post('/bookings', isAuthenticated, (req, res) => {
 });
 
 // Route to update a booking by ID
-app.put('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+app.put('/bookings/:id', isAuthorisedForRequest, async (req, res) => {
     try {
         const oldBooking = await Booking.findByIdAndUpdate(req.params.id, req.body);
         if(!oldBooking){
@@ -170,7 +199,7 @@ app.put('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, re
 });
 
 // Route to delete a booking by ID
-app.delete('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+app.delete('/bookings/:id',  isAuthorisedForRequest, async (req, res) => {
     try {
         const booking = await Booking.findByIdAndRemove(req.params.id);
         if(!booking){
@@ -185,7 +214,7 @@ app.delete('/bookings/:id', isAuthenticated, isAuthorisedForRequest, async (req,
 // USER ENDPOINTS
 
 // Route to edit user information
-app.put('/users/:id', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
+app.put('/users/:id', isAuthorisedForRequest, async (req, res) => {
     try{
         const oldUser = await User.findByIdAndUpdate(req,params.id, req.body);
         if(!oldUser) {
