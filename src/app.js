@@ -89,14 +89,14 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 // Middleware to check if a user is an admin
 
-const isAdmin = async (req, res, next) => {
-        if(req.user.isAdmin) {
-            next();
-        } else {
-            res.status(403).json({ message: 'You are not authorised to do this action'});
-        }
+// const isAdmin = async (req, res, next) => {
+//         if(req.user.isAdmin) {
+//             next();
+//         } else {
+//             res.status(403).json({ message: 'You are not authorised to do this action'});
+//         }
     
-};
+// };
 
 // Middlware to check data access/edit/delete permissions
 
@@ -114,11 +114,16 @@ const isAuthorisedForRequest = async (req, res, next) => {
 }
 
 
-// Route to retrieve all bookings as a basic user
+// Route to retrieve all bookings
 app.get('/bookings', isAuthenticated, isAuthorisedForRequest, async (req, res) => {
     try {
-        const bookings = await Booking.find({ userId: req.user.id });
-        res.send({ bookings, user: req.user });
+        if(req.user.isAdmin){
+            const bookings = await Booking.find({});
+            res.send({ bookings, user: req.user });
+        } else {
+            const bookings = await Booking.find({ userId: req.user.id });
+            res.send({ bookings, user: req.user });
+        }
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong' });
     }
