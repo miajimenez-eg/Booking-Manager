@@ -6,7 +6,7 @@ const connectDB = require('./config/db');
 const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
-const { User, hashPassword, encryptInfo } = require('./models/User');
+// const { User, hashPassword, encryptInfo } = require('./models/User');
 
 const PORT = process.env.PORT || 3000;
 
