@@ -20,17 +20,17 @@ app.use(bodyParser.json());
 
 // Custom middleware to handle user authentication
 app.use((req, res, next) => {
-    console.log('handleAuthentication function running')
     // Initialise user object in the request if not present
     if(req.user == undefined){
         req.user = {};
+        
     }
     // Extract user information from JWT token in headers
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer ')){
         // Decode JWT token payload
         const token = req.headers.authorization.split(' ')[1];
         const tokenPayLoad = jwt.decode(token);
-
+        
         // Set user information from JWT payload
         req.user.name = tokenPayLoad.name;
         req.user.id = tokenPayLoad.sub;
@@ -54,8 +54,9 @@ app.use((req, res, next) => {
             } else {
                 res.status(401).json({ message: 'Unauthorised: You need to be logged in.'})
             }
-            next();
+            
         });
+        // console.log('handleAuthentication function running')
     }
 })
 
@@ -86,6 +87,7 @@ app.get('/profile', requiresAuth(), (req, res) => {
 });
 
 const isAuthorisedForAllBookings = (req, res, next) => {
+    console.log("hello");
     if (req.user.isAdmin) {
         next();
     } else {
@@ -145,14 +147,16 @@ const isAuthorisedForRequest = async (req, res, next) => {
 
 
 // Route to retrieve all bookings
-app.get('/bookings', isAuthorisedForAllBookings, async (req, res) => {
+app.get('/bookings', async (req, res) => {
     try {
-        if(req.user.isAdmin){
-            const bookings = await Booking.find({});
-            res.send({ bookings, user: req.user });
-        } else {
-            const bookings = await Booking.find({ userId: req.user.id });
-            res.send({ bookings, user: req.user });
+        if(req.oidc.isAuthenticated) {
+            if(req.user.isAdmin){
+                const bookings = await Booking.find({});
+                res.send({ bookings, user: req.user });
+            } else {
+                const bookings = await Booking.find({ userId: req.user.id });
+                res.send({ bookings, user: req.user });
+            }
         }
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong' });
@@ -160,7 +164,7 @@ app.get('/bookings', isAuthorisedForAllBookings, async (req, res) => {
 });
 
 // Route to retrieve a specific booking by ID
-app.get('/bookings/:id', isAuthorisedForBooking, async (req, res) => {
+app.get('/bookings/:id', async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
         if(!booking) {
@@ -185,7 +189,7 @@ app.post('/bookings', (req, res) => {
 });
 
 // Route to update a booking by ID
-app.put('/bookings/:id', isAuthorisedForRequest, async (req, res) => {
+app.put('/bookings/:id', async (req, res) => {
     try {
         const oldBooking = await Booking.findByIdAndUpdate(req.params.id, req.body);
         if(!oldBooking){
@@ -199,7 +203,7 @@ app.put('/bookings/:id', isAuthorisedForRequest, async (req, res) => {
 });
 
 // Route to delete a booking by ID
-app.delete('/bookings/:id',  isAuthorisedForRequest, async (req, res) => {
+app.delete('/bookings/:id', async (req, res) => {
     try {
         const booking = await Booking.findByIdAndRemove(req.params.id);
         if(!booking){
@@ -214,7 +218,7 @@ app.delete('/bookings/:id',  isAuthorisedForRequest, async (req, res) => {
 // USER ENDPOINTS
 
 // Route to edit user information
-app.put('/users/:id', isAuthorisedForRequest, async (req, res) => {
+app.put('/users/:id', async (req, res) => {
     try{
         const oldUser = await User.findByIdAndUpdate(req,params.id, req.body);
         if(!oldUser) {
