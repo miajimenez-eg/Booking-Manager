@@ -28,6 +28,8 @@ app.use((req, res, next) => {
         // Decode JWT token payload
         const token = req.headers.authorization.split(' ')[1];
         const tokenPayLoad = jwt.decode(token);
+
+        // Set user information from JWT payload
         req.user.name = tokenPayLoad.name;
         req.user.id = tokenPayLoad.sub;
         req.user.token = token;
@@ -41,9 +43,15 @@ app.use((req, res, next) => {
     } else {
         // If not authenticated, use OpenID Connect authentication
         auth(authConfig)(req, res, () => {
-            req.user.id = req.oidc.user.sub;
-            req.user.name = req.oidc.user.name;
-            req.user.token = req.oidc.idToken;
+            // Check if OpenId Connect authentication was successful
+            if(req.oidc.isAuthenticated()){
+                req.user.id = req.oidc.user.sub;
+                req.user.name = req.oidc.user.name;
+                req.user.token = req.oidc.idToken;
+                next();
+            } else {
+                res.status(401).json({ message: 'Unauthorised: You need to be logged in.'})
+            }
             next();
         });
     }
