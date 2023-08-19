@@ -144,7 +144,9 @@ const isAuthorisedForRequest = async (req, res, next) => {
 
 // Middlware to check data access/edit/delete permissions
 
-
+app.get('/user', async (req, res) => {
+    res.send(req.user);
+})
 
 // Route to retrieve all bookings
 app.get('/bookings', async (req, res) => {
