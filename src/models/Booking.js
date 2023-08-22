@@ -4,7 +4,7 @@ const bookingSchema = new mongoose.Schema({
     destination: String,
     price: Number,
     dates: Date,
-    accommodation: String,
+    hotel: String,
     userId: Number
 });
 

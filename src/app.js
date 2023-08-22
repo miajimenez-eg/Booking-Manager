@@ -7,7 +7,6 @@ const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
 const { User } = require('./models/User');
-const handleAuthentication = require('./authMiddleware');
 
 const PORT = process.env.PORT || 3000;
 
