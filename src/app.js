@@ -7,6 +7,7 @@ const { auth } = require('express-openid-connect');
 const Booking = require('./models/Booking');
 const { requiresAuth } = require('express-openid-connect');
 const { User } = require('./models/User');
+// const mongoose = require('mongoose');
 
 const PORT = process.env.PORT || 3000;
 
@@ -85,48 +86,48 @@ app.get('/profile', requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.oidc.user));
 });
 
-const isAuthorisedForAllBookings = (req, res, next) => {
-    console.log("hello");
-    if (req.user.isAdmin) {
-        next();
-    } else {
-        res.status(403).json({ message: 'You are not authorised to do this action' });
-    }
-};
+// const isAuthorisedForAllBookings = (req, res, next) => {
+//     console.log("hello");
+//     if (req.user.isAdmin) {
+//         next();
+//     } else {
+//         res.status(403).json({ message: 'You are not authorised to do this action' });
+//     }
+// };
 
-const isAuthorisedForBooking = async (req, res, next) => {
-    try {
-        const booking = await Booking.findById(req.params.id);
-        if (!booking) {
-            res.status(404).json({ message: 'Booking not found' });
-            return;
-        }
+// const isAuthorisedForBooking = async (req, res, next) => {
+//     try {
+//         const booking = await Booking.findById(req.params.id);
+//         if (!booking) {
+//             res.status(404).json({ message: 'Booking not found' });
+//             return;
+//         }
         
-        const user = await User.findById(req.user.id);
-        if (booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
-            next();
-        } else {
-            res.status(403).json({ message: 'You are not authorised to do this action' });
-        }
-    } catch (error) {
-        res.status(400).json({ message: 'Something went wrong' });
-    }
-};
+//         const user = await User.findById(req.user.id);
+//         if (booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
+//             next();
+//         } else {
+//             res.status(403).json({ message: 'You are not authorised to do this action' });
+//         }
+//     } catch (error) {
+//         res.status(400).json({ message: 'Something went wrong' });
+//     }
+// };
 
 
-const isAuthorisedForRequest = async (req, res, next) => {
-    try {
-        const booking = await Booking.findById(req.params.id);
-        const user = await User.findById(req.params.id);
-        if(booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
-            next();
-        } else {
-            res.status(403).json({ message: 'You are not authorised to do this action'});
-        }
-    } catch(error) {
-        res.status(400).json({ message: 'Something went wrong' });
-    }
-}
+// const isAuthorisedForRequest = async (req, res, next) => {
+//     try {
+//         const booking = await Booking.findById(req.params.id);
+//         const user = await User.findById(req.params.id);
+//         if(booking.userId === req.user.id || req.user.isAdmin || user.id === req.user.id) {
+//             next();
+//         } else {
+//             res.status(403).json({ message: 'You are not authorised to do this action'});
+//         }
+//     } catch(error) {
+//         res.status(400).json({ message: 'Something went wrong' });
+//     }
+// }
 
 // BOOKING ENDPOINTS
 
@@ -230,6 +231,11 @@ app.put('/users/:id', async (req, res) => {
     } catch(error) {
         res.status(400).json({ message: 'Something went wrong' });
     }
+})
+
+// AUTH0 ENDPOINTS
+app.post('/dev-of6tw1i4lkr30tq2.us.auth0.com/u/signup', async (req, res) => {
+    console.log('sign up');
 })
 
 // app.post('/register', async (req, res) => {
