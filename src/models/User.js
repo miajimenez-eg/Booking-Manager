@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
 
 
 // Create User model and assign properties
@@ -12,6 +10,11 @@ const userSchema = new mongoose.Schema({
     isAdmin : { type: Boolean, default: false }
 });
 
+const User = mongoose.model('User', userSchema);
+
+module.exports = { User };
+// const bcrypt = require('bcrypt');
+// const crypto = require('crypto');
 // Function to encrypt sensitive data
 // async function encryptInfo(data, encryptionKey){
 //     // Symmetric encryption algorithm
@@ -46,7 +49,3 @@ const userSchema = new mongoose.Schema({
 
 //     return hashedPassword;
 // }
-
-const User = mongoose.model('User', userSchema);
-
-module.exports = { User };
