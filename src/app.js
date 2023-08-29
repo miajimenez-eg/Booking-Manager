@@ -156,6 +156,7 @@ app.get('/bookings', async (req, res) => {
                 const bookings = await Booking.find({});
                 res.send({ bookings, user: req.user });
             } else {
+                console.log(req.user);
                 const bookings = await Booking.find({ userId: req.user.id });
                 res.send({ bookings, user: req.user });
             }
@@ -179,8 +180,8 @@ app.get('/bookings/:id', async (req, res) => {
 });
 
 // Route to create a new booking
-app.post('/bookings', (req, res) => {
-    const booking = new Booking(req.body);
+app.post('/bookings', (req, res) => { 
+    const booking = new Booking({...req.body, userId : req.user.id});
     booking.save(booking)
         .then(data => {
             res.send(data)
@@ -233,10 +234,6 @@ app.put('/users/:id', async (req, res) => {
     }
 })
 
-// AUTH0 ENDPOINTS
-app.post('/dev-of6tw1i4lkr30tq2.us.auth0.com/u/signup', async (req, res) => {
-    console.log('sign up');
-})
 
 // app.post('/register', async (req, res) => {
 //     try {
