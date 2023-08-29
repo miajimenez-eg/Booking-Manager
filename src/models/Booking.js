@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const bookingSchema = new mongoose.Schema({
     destination: String,
     price: Number,
-    dates: Date,
+    dates: String,
     hotel: String,
-    userId: Number
+    userId: String
 });
 
 const Booking = mongoose.model('Booking', bookingSchema)

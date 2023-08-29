@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Create User model and assign properties
 const userSchema = new mongoose.Schema({
     email: String,
-    name: String, 
+    // username: String, 
     password: String,
     bookings: Object,
     isAdmin : { type: Boolean, default: false }
