@@ -14,8 +14,8 @@ const User = mongoose.model('User', userSchema);
 module.exports = { User };
 // const bcrypt = require('bcrypt');
 // const crypto = require('crypto');
-// Function to encrypt sensitive data
-// async function encryptInfo(data, encryptionKey){
+// // Function to encrypt sensitive data
+//     function encryptInfo(data, encryptionKey){
 //     // Symmetric encryption algorithm
 //     const algorithm = 'aes-256-cbc';
 
@@ -38,10 +38,10 @@ module.exports = { User };
 //     return encryptedObject;
 // }
 
-// Function to hash a user's password
-// async function hashPassword(password){
+// // Function to hash a user's password
+//     function hashPassword(password){
 //     // Generate salt
-//     const salt = bcrypt.genSaltSync(parseInt(rounds));
+//     const salt = bcrypt.genSaltSync(parseInt(10));
 
 //     // Hash the password using the salt
 //     const hashedPassword = bcrypt.hashSync(password, salt);
