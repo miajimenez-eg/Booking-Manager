@@ -1,6 +1,6 @@
 # Booking Manager API
 
-Description here
+This is an API that follows a RESTful structure, where users can sign up/in and create, read, update and delete their own travel bookings.
 
 ## Getting Started
 ### Prerequisites
@@ -16,42 +16,42 @@ List any prerequisites users need to have in order to use your API, such as Node
 
 ### Authentication
 
-Explain how authentication works in your API. If it requires API keys, tokens, or any specific setup, provide the necessary information here.
+This application uses Auth0 to authenticate and authorise users. Just sign up using an email and a password that meets the requirements.
 
 ### Endpoints
 ### GET '/'
-- This endpoint takes you to the home/login page.
+- This endpoint takes you to the login page.
 
 #### Authentication
-- This endppoint is accessible to both authenticated and unauthenticated users.
+- This endpoint is accessible to both authenticated and unauthenticated users.
 
 ### GET '/bookings'
-- This endpoint allows you to view all bookings made by a user.
+- This endpoint allows you to view all your bookings. Admin users can see all bookings.
 
 #### Authentication
-- This endppoint is accessible to authenticated users only.
+- This endpoint is accessible to authenticated users only.
 
 ### GET '/bookings/:id'
-- This endpoint allows you to retireve details and information about a specific booking by providing its unique ID
+- This endpoint allows you to retrieve details and information about one of your own bookings by providing its unique ID. An admin user can see any booking by any user.
 
 #### Authentication
-- This endppoint is accessible to authenticated users only.
+- This endpoint is accessible to authenticated users only.
 
 ### POST '/bookings'
 - This endpoint enables a user to create a new booking.
 
 #### Authentication
-- This endppoint is accessible to authenticated users only.
+- This endpoint is accessible to authenticated users only.
 
 ### PUT '/bookings/:id'
-- This endpoint can be used to update a booking by providing its unique ID.
+- This endpoint can be used to update one of your own bookings by providing its unique ID. An admin user can update any booking by any user.
 
 #### Authentication
-- This endppoint is accessible to authenticated users only.
+- This endpoint is accessible to authenticated users only.
 
 ### DELETE '/bookings/:id'
-- This endpoint enables a user to delete a booking.
+- This endpoint enables you to delete one of your own bookings. An admin user can delete any booking by any user.
 
 #### Authentication
-- This endppoint is accessible to authenticated users only.
+- This endpoint is accessible to authenticated users only.
 
